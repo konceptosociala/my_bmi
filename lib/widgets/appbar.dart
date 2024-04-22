@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-class BMIAppBar extends AppBar {
+class MainAppBar extends AppBar {
   final BuildContext context;
   final String? heading;
   
-  BMIAppBar({
+  MainAppBar({
     super.key, 
     required this.context, 
     this.heading,
   }) : super (
     title: Text(
       heading??"",
-      style: GoogleFonts.ubuntuMono(textStyle: Theme.of(context).textTheme.displayMedium),
+      style: Theme.of(context).textTheme.displayMedium,
     ),
     leading: Builder(
       builder: (BuildContext context) {

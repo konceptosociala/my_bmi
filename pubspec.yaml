@@ -11,8 +11,8 @@ dependencies:
   fl_chart: 0.64.0
   flutter:
     sdk: flutter
-  google_fonts: 6.1.0
-  shared_preferences: ^2.2.3
+  flutter_animate: 4.5.0
+  shared_preferences: 2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +21,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: IBMPlexMono
+      fonts: 
+        - asset: assets/fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf
