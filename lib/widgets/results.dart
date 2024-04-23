@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:my_bmi/data/bmi.dart';
 import 'package:my_bmi/widgets/labeled_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Results extends StatelessWidget {
   final AnimationController animController;
+  final BMIData bmiData;
   final BMI? currentBMI;
 
-  const Results({super.key, required this.animController, required this.currentBMI});
+  const Results({
+    super.key, 
+    required this.animController, 
+    required this.currentBMI,
+    required this.bmiData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +45,10 @@ class Results extends StatelessWidget {
                 children: [
                   LabeledButton(
                     label: "Save results", 
-                    onPressed: () => (),
+                    onPressed: (){
+                      bmiData.add(currentBMI!);
+                      _saveBmiData();
+                    },
                   )
                 ],
               ),
@@ -46,6 +56,12 @@ class Results extends StatelessWidget {
         ],
       ),
     ]).animate(controller: animController, autoPlay: false).fade();
+  }
+
+  Future<void> _saveBmiData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    prefs.setStringList("bmi_data", bmiData.toJson());
   }
 
   String resultText() {

@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:adwaita/adwaita.dart';
 import 'package:flutter/material.dart';
+import 'package:my_bmi/data/bmi.dart';
 import 'package:my_bmi/sections/main_section.dart';
 import 'package:my_bmi/sections/page_section.dart';
 import 'package:my_bmi/sections/stats_section.dart';
 import 'package:my_bmi/widgets/appbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(App());
@@ -39,13 +43,18 @@ class Page extends StatefulWidget {
   State<Page> createState() => _PageState();
 }
 
-class _PageState extends State<Page> { 
-  final PageSection _mainSection = const MainSection();
-  final PageSection _statsSection = const StatsSection();
+class _PageState extends State<Page> {
+  final BMIData _bmiData = BMIData.empty();
+
+  late final PageSection _mainSection;
+  late final PageSection _statsSection;
 
   PageSection? _section;
 
   _PageState() {
+    _loadBMIData();
+    _mainSection = MainSection(_bmiData);
+    _statsSection = StatsSection(_bmiData);
     _section = _mainSection;
   }
 
@@ -87,7 +96,7 @@ class _PageState extends State<Page> {
           ),
         ],
       )),
-      body: _section,
+      body: SingleChildScrollView(child: _section),
     );
   }
 
@@ -95,5 +104,18 @@ class _PageState extends State<Page> {
     setState(() {
       _section = section;
     });
+  }
+
+  Future<void> _loadBMIData() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    List<String>? json = prefs.getStringList("bmi_data");
+    if (json == null) return;
+
+    for (String s in json) { 
+      log(s); 
+    }
+
+    _bmiData.load(json);
   }
 }

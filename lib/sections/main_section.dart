@@ -6,10 +6,11 @@ import 'package:my_bmi/widgets/heading.dart';
 import 'package:my_bmi/widgets/labeled_button.dart';
 import 'package:my_bmi/widgets/labeled_text_field.dart';
 import 'package:my_bmi/widgets/results.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MainSection extends PageSection {
-  const MainSection({Key? key}) : super (key: key);
+  final BMIData _bmiData;
+
+  const MainSection(this._bmiData, {Key? key}) : super (key: key);
 
   @override
   State<MainSection> createState() => _MainSectionState();
@@ -20,14 +21,14 @@ class _MainSectionState extends State<MainSection> with TickerProviderStateMixin
   String _heightField = "";
   BMI? _currentBMI;
 
-  late AnimationController _animationController;
   late BMIData _bmiData;
+  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this);
-    _loadBmiData();
+    _bmiData = widget._bmiData;
   }
 
   @override
@@ -62,6 +63,7 @@ class _MainSectionState extends State<MainSection> with TickerProviderStateMixin
         Results(
           currentBMI: _currentBMI,
           animController: _animationController,
+          bmiData: _bmiData,
         ),
       ]),
     );
@@ -99,19 +101,9 @@ class _MainSectionState extends State<MainSection> with TickerProviderStateMixin
         value: (mass/(height*height)*10000).toInt(), 
         date: DateTime.now(),
       );
-      _bmiData.add(_currentBMI!);
     });
 
     _animationController.reset();
     _animationController.forward();
-  }
-
-  Future<void> _loadBmiData() async {
-    // final prefs = await SharedPreferences.getInstance();
-
-    setState(() {
-      // _bmiData = BMIData.parse();
-      // prefs.getStringList('bmi_data');
-    });
   }
 }
