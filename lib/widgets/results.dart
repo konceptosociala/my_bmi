@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:my_bmi/data/bmi.dart';
+import 'package:my_bmi/utils/dialog.dart';
 import 'package:my_bmi/widgets/labeled_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,10 +46,7 @@ class Results extends StatelessWidget {
                 children: [
                   LabeledButton(
                     label: "Save results", 
-                    onPressed: (){
-                      bmiData.add(currentBMI!);
-                      _saveBmiData();
-                    },
+                    onPressed: () => _saveBMIData(context),
                   )
                 ],
               ),
@@ -58,9 +56,28 @@ class Results extends StatelessWidget {
     ]).animate(controller: animController, autoPlay: false).fade();
   }
 
-  Future<void> _saveBmiData() async {
-    final prefs = await SharedPreferences.getInstance();
+  void _saveBMIData(BuildContext context) {
+    for (var bmi in bmiData.values.asMap().entries) {
+      if (bmi.value.date.day == currentBMI!.date.day
+        && bmi.value.date.month == currentBMI!.date.month
+        && bmi.value.date.year == currentBMI!.date.year)
+      {
+        bmiData.values[bmi.key] = currentBMI!;
+        _save();
+        
+        dialog(context, "Success", "Your results were rewritten!");
+        return;
+      }
+    }
+    
+    bmiData.add(currentBMI!);
+    _save();
 
+    dialog(context, "Success", "Your results were saved!");
+  }
+
+  Future<void> _save() async {
+    final prefs = await SharedPreferences.getInstance();
     prefs.setStringList("bmi_data", bmiData.toJson());
   }
 
@@ -100,9 +117,9 @@ class BMIPalette extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _coloredBox(0, Colors.blue, "<18"),
-          _coloredBox(1, Colors.green, "19-25"),
-          _coloredBox(2, Colors.amber, "26-30"),
-          _coloredBox(3, Colors.orange[700]!, "31-35"),
+          _coloredBox(1, Colors.green, "19\n/\n25"),
+          _coloredBox(2, Colors.amber, "26\n/\n30"),
+          _coloredBox(3, Colors.orange[700]!, "31\n/\n35"),
           _coloredBox(4, Colors.red, ">35"),
         ],
       ),
